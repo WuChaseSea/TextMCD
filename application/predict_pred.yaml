@@ -1,0 +1,30 @@
+name: cd_predict
+version: v1
+
+model:
+  model_path: [
+    ****.ckpt,
+  ]
+
+mode: small_pred
+
+dataset:
+  pre_img_path: "A folder path"
+  post_img_path: "A folder path"
+  txt_list_path: ~
+  img_suffix: .png
+  gt_suffix: .png
+  tmp_folder_path: ./data/temp
+  output_folder_path: ./mp_small_origin_ban_400
+
+predict:
+  subsize: 512
+  padding: 128
+  tile: 512
+  paired: True
+  threshold: 0.5
+  tta: False
+  save_shp: True
+
+postprocessing:
+  sam_optimization: False

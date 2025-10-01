@@ -1,0 +1,86 @@
+name: cd_WHU
+version: mmseg_vfccd
+
+model:
+  type: TextMCDModel
+  pretrained: 'pretrained_models/clip_vit-base-patch16-224_3rdparty-d08f8887.pth'
+  asymetric_input: False
+  
+
+loss: [{
+  type: BCEWithLogitsLoss, 
+  loss_name: bce_loss,
+  loss_weight: 1.0,
+}, {
+  type: Binary_DiceLoss, 
+  loss_name: dice_loss, 
+  loss_weight: 1.0, 
+}]
+
+metrics:
+  type: CPAcc
+
+data:
+  type: ChangeData
+  data_path: ~
+  train_data_path: './data/WHU/train'
+  train_label_path: './data/WHU/train/label'
+  val_data_path: './data/WHU/val'
+  val_label_path: './data/WHU/val/label'
+  train_list: ~
+  val_list: ~
+  img_suffix: .tif
+  label_suffix: .tif
+  val_img_suffix: .tif
+  val_label_suffix: .tif
+  num_classes: *num_classes
+  color_table: {
+    1: [255, 000, 000],  # 红色 建筑物
+    0: [0, 0, 0]  # 黑色
+    }
+  batch_size: 4
+  stratified_by: null
+  group_by: null
+  dataset:
+    band_num: 1
+    resize: &resize 512
+    trans: {
+      train: {type: Compose, transforms: [
+        {type: Resize, height: *resize, width: *resize},
+        {type: HorizontalFlip, p: 0.5},
+        {type: VerticalFlip, p: 0.5},
+        {type: HueSaturationValue, hue_shift_limit: 10, sat_shift_limit: 5, val_shift_limit: 10, p: 0.5},
+        {type: ShiftScaleRotate, shift_limit: 0.2, scale_limit: 0.2, rotate_limit: 0, p: 0.5},
+        {type: GaussNoise, p: 0.5},
+      ], additional_targets: {imageB: image}},
+      val: {type: Compose, transforms: [
+        {type: Resize, height: *resize, width: *resize},
+      ], additional_targets: {imageB: image}}
+    }
+    mean_value: [0.31275325336310233, 0.3972738943025338, 0.3070039872257214, 0.31275325336310233, 0.3972738943025338, 0.3070039872257214]
+    std_value: [0.12348501077068147, 0.12272028104760302, 0.14730654056310574, 0.12348501077068147, 0.12272028104760302, 0.14730654056310574]
+  num_workers: 8
+
+train:
+  # optimizer
+  optimizer: adam
+  learning_rate: 5e-4
+  weight_decay: 1e-5
+
+  # scheduler
+  num_epochs: 400
+  warmup_epochs: 10
+  scheduler: one_cycle
+  gamma: 0.3
+
+  # trainer
+  monitor: val_f1score
+  monitor_mode: max
+  log_type: 'tb'
+  log_step: 50
+  val_interval: 1
+  val_interval_step: ~
+  swa: False
+  grad_clip: 2.0
+  strategy: ddp
+  precision: 32
