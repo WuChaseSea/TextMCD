@@ -49,4 +49,5 @@ python Solve.py --config configs/textmcd/cd_mmseg_clcd.yaml --gpus 0
 
 * organize the model files of textmcd;
 * update pretrained models;
+
 ✅ 2025/11/02 upload some training files for the framework.
