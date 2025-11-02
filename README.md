@@ -9,8 +9,8 @@ Official implementation for the paper "TextMCD: Mask Classification Based Change
 * Create a conda virtual environment and activate it:
 
 ```sh
-conda create -n vfccd python=3.8 -y
-conda activate vfccd
+conda create -n ecd python=3.10 -y
+conda activate ecd
 pip install -r requirements.txt
 ```
 
@@ -44,3 +44,9 @@ python application/cd_application.py --config application/predict_pred.yaml
 ```sh
 python Solve.py --config configs/textmcd/cd_mmseg_clcd.yaml --gpus 0
 ```
+
+## TODO
+
+* organize the model files of textmcd;
+* update pretrained models;
+✅ 2025/11/02 upload some training files for the framework.
