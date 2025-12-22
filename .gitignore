@@ -1,0 +1,7 @@
+# Ignore all hidden files and directories
+.*
+
+# Keep essential Git files
+!.gitignore
+!.gitattributes
+!.github/
